@@ -1,6 +1,7 @@
+#!/usr/bin/env python3
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, Iterator, List, Tuple
+from typing import Any, Dict, Iterator, List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -48,7 +49,7 @@ class DISFA:
         # DataLoader will use a copy of it
         self.property_dict = property_dict
 
-        return DataLoader([x for x in self], property_dict=deepcopy(property_dict))
+        return DataLoader(list(self), property_dict=deepcopy(property_dict))
 
     def __iter__(self) -> Iterator[Dict[str, List[np.ndarray]]]:
         """
@@ -138,7 +139,7 @@ class DISFA:
 
 
 class MNIST(DISFA):
-    def __init__(self, *args, imbalance=False, **kwargs) -> None:
+    def __init__(self, *args: Any, imbalance: bool = False, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         self.mnist = caching.read_pickle(Path("mnist"))
@@ -224,7 +225,7 @@ class MNIST(DISFA):
             subjects = subjects[index == 1]
         return subjects.tolist()
 
-    def get_au(self, subject) -> Tuple[pd.DataFrame, List[Path]]:
+    def get_au(self, subject: str) -> Tuple[pd.DataFrame, List[Path]]:
         # from training or testing
         data = self.mnist["training"][1]
         subject = int(subject)
@@ -243,7 +244,7 @@ class MNIST(DISFA):
 
 
 class BP4D_PLUS(DISFA):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         if self.au == "6":
             self.au = "06"
@@ -296,7 +297,9 @@ class BP4D_PLUS(DISFA):
             openface = openface.loc[:, columns]
             openface = openface.astype(np.float32)
             openface.index += ifile * 50000
-            openface.loc[np.intersect1d(openface.index, au_data.index).tolist(), :]
+            openface = openface.loc[
+                np.intersect1d(openface.index, au_data.index).tolist(), :
+            ]
             data.append(openface)
         data = pd.concat(data)
         data -= data.median()
