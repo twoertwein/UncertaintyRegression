@@ -12,7 +12,9 @@ All building blocks are part of [this repository](https://bitbucket.org/twoertwe
 
 ## Installation
 ```sh
-poetry add git+https://github.com:twoertwein/UncertaintyRegression.git
+git clone git@github.com:twoertwein/UncertaintyRegression.git
+cd UncertaintyRegression
+poetry update
 poetry run pip install torchvision==0.9.1+cu102 -f https://download.pytorch.org/whl/torch_stable.html
 ```
 

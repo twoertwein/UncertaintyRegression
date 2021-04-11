@@ -5,6 +5,7 @@ from typing import Any, Dict, Iterator, List, Tuple
 
 import numpy as np
 import pandas as pd
+import torchvision
 from python_tools import caching, generic
 from python_tools.ml.data_loader import DataLoader
 from python_tools.ml.pytorch_tools import dict_to_batched_data
@@ -142,9 +143,20 @@ class MNIST(DISFA):
     def __init__(self, *args: Any, imbalance: bool = False, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
-        self.mnist = caching.read_pickle(Path("mnist"))
+        mnist_training = torchvision.datasets.MNIST(".", download=True, train=True)
+        mnist_test = torchvision.datasets.MNIST(".", train=False)
+        self.mnist = {
+            "training": [
+                mnist_training.data.numpy(),
+                mnist_training.targets.numpy(),
+            ],
+            "test": [
+                mnist_test.data.numpy(),
+                mnist_test.targets.numpy(),
+            ],
+        }
+
         for key in self.mnist:
-            self.mnist[key] = list(self.mnist[key])
             self.mnist[key][0] = self.mnist[key][0].reshape(
                 self.mnist[key][0].shape[0], -1
             )
