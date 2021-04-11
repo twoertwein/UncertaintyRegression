@@ -19,11 +19,11 @@ poetry run pip install torchvision==0.9.1+cu102 -f https://download.pytorch.org/
 ```
 
 ## Usage
-Run the grid-search for a primary model to predict facial action units (AU) intensities. Some primary models can also estiamte their uncertainty.
+Run the grid-search for a primary model to predict facial action units (AU) intensities. Some primary models can also estimate their uncertainty.
 ```sh
 python train.py --method dropout --workers 4 --dataset mnist
 ```
-Train a secundary model to estimate the uncertainty of the primary dropout model.
+Train a secondary model to estimate the uncertainty of the primary dropout model.
 ```sh
 python train.py --uncertainty umlp --workers 4 --dataset mnist
 ```
