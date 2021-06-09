@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Tuple
+from typing import Any, Iterator
 
 import numpy as np
 import pandas as pd
@@ -52,7 +52,7 @@ class DISFA:
 
         return DataLoader(list(self), property_dict=deepcopy(property_dict))
 
-    def __iter__(self) -> Iterator[Dict[str, List[np.ndarray]]]:
+    def __iter__(self) -> Iterator[dict[str, list[np.ndarray]]]:
         """
         Returns a list of training, evaluation, test folds
 
@@ -78,7 +78,7 @@ class DISFA:
             while data:
                 yield data.pop()
 
-    def get_au(self, subject: str) -> Tuple[pd.DataFrame, List[Path]]:
+    def get_au(self, subject: str) -> tuple[pd.DataFrame, list[Path]]:
         """
         Returns a Pandas DataFrame with the specified AU.
         """
@@ -109,14 +109,14 @@ class DISFA:
         openface["subject"] = int(subject[2:])
         return openface
 
-    def get_list_of_subjects(self) -> List[str]:
+    def get_list_of_subjects(self) -> list[str]:
         """
         Returns the list of subject ids.
         """
         files = DISFA_FOLDER.glob("Videos_LeftCamera/*.avi")
         return sorted(file.name[9:14] for file in files)
 
-    def get_subjects_for_fold(self) -> List[str]:
+    def get_subjects_for_fold(self) -> list[str]:
         # load labels for all subjects
         subjects = self.get_list_of_subjects()
         data = [self.get_au(subject)[0] for subject in subjects]
@@ -132,7 +132,7 @@ class DISFA:
         test = fold_index == self.ifold
         evaluation = fold_index == ((self.ifold + 1) % self.n_folds)
         training = ~test & ~evaluation
-        fold = {"training": training, "evaluation": evaluation, "test": test}
+        fold = {"training": training, "validation": evaluation, "test": test}
         subject_index = fold[self.name]
         assert subject_index.sum() > 0, f"{self.name} {self.ifold} {self.au}"
 
@@ -195,7 +195,7 @@ class MNIST(DISFA):
         self.n_training = int(np.floor(self.mnist["training"][1].size / 1006))
         self.n_test = int(np.floor(self.mnist["test"][1].size / 1006))
 
-    def get_list_of_subjects(self) -> List[str]:
+    def get_list_of_subjects(self) -> list[str]:
         # simulate that each person has 1006 data points
         return np.arange(self.n_training + self.n_test, dtype=int).astype(str).tolist()
 
@@ -219,7 +219,7 @@ class MNIST(DISFA):
 
         return data
 
-    def get_subjects_for_fold(self) -> List[str]:
+    def get_subjects_for_fold(self) -> list[str]:
         if self.name == "test":
             return np.arange(self.n_training, self.n_training + self.n_test).astype(str)
 
@@ -237,7 +237,7 @@ class MNIST(DISFA):
             subjects = subjects[index == 1]
         return subjects.tolist()
 
-    def get_au(self, subject: str) -> Tuple[pd.DataFrame, List[Path]]:
+    def get_au(self, subject: str) -> tuple[pd.DataFrame, list[Path]]:
         # from training or testing
         data = self.mnist["training"][1]
         subject = int(subject)
@@ -265,7 +265,7 @@ class BP4D_PLUS(DISFA):
         self.dataset = Path("BP4D_plus")
         self.folder = BP4D_PLUS_FOLDER
 
-    def get_au(self, subject: str) -> Tuple[pd.DataFrame, List[Path]]:
+    def get_au(self, subject: str) -> tuple[pd.DataFrame, list[Path]]:
         videos, files = self.get_labeled_videos(subject)
         data = []
         for ifile, file in enumerate(files):
@@ -279,7 +279,7 @@ class BP4D_PLUS(DISFA):
 
         return data, videos
 
-    def get_labeled_videos(self, subject: str) -> Tuple[List[Path], List[Path]]:
+    def get_labeled_videos(self, subject: str) -> tuple[list[Path], list[Path]]:
         labels = self.folder.glob(f"AU{self.au}/{subject}*.csv")
         videos = list(self.dataset.glob(f"{subject}*.hdf"))
         # delete labels
@@ -321,6 +321,6 @@ class BP4D_PLUS(DISFA):
         data["subject"] = subject_id
         return data
 
-    def get_list_of_subjects(self) -> List[str]:
+    def get_list_of_subjects(self) -> list[str]:
         files = self.dataset.glob("*.hdf")
         return sorted({file.name.split("_", 1)[0] for file in files})

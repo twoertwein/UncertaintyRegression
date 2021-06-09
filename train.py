@@ -3,7 +3,6 @@ import argparse
 import shutil
 from functools import partial
 from pathlib import Path
-from typing import Dict
 
 import numpy as np
 from python_tools.generic import namespace_as_string
@@ -19,7 +18,7 @@ from python_tools.ml.evaluator import evaluator
 from dataloader import BP4D_PLUS, DISFA, MNIST
 
 
-def train(partitions: Dict[str, DISFA], folder: Path, args: argparse.Namespace) -> None:
+def train(partitions: dict[str, DISFA], folder: Path, args: argparse.Namespace) -> None:
     params = {"interval": True, "metric_max": True, "y_names": np.array(["intensity"])}
 
     model = MLPModel(device="cuda", **params)
@@ -173,7 +172,7 @@ if __name__ == "__main__":
         data = {
             i: {
                 name: backend(au, i, name)
-                for name in ("training", "evaluation", "test")
+                for name in ("training", "validation", "test")
             }
             for i in range(folds)
         }
