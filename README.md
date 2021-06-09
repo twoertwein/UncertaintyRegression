@@ -1,5 +1,5 @@
 # UncertaintyRegression
-The code for "Simple and Effective Approaches for Uncertainty Prediction in Facial Action Unit Intensity Regression" at FG 2020
+The code for ["Simple and Effective Approaches for Uncertainty Prediction in Facial Action Unit Intensity Regression"](https://par.nsf.gov/biblio/10169266-simple-effective-approaches-uncertainty-prediction-facial-action-unit-intensity-regression) at FG 2020
 
 All building blocks are part of [this repository](https://bitbucket.org/twoertwein/python-tools/src/master/):
 
