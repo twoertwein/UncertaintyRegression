@@ -126,20 +126,23 @@ if __name__ == "__main__":
     # choose dataloader
     folds = 1
     aus = [1, 2, 4, 5, 6, 9, 12, 15, 17, 20, 25, 26]
-    backend = lambda au, fold, name: DISFA(au, ifold=fold, name=name).get_loader()
+
+    def backend(au, fold, name):
+        return DISFA(au, ifold=fold, name=name).get_loader()
+
     if args.dataset == "bp4d_plus":
         aus = [6, 10, 12, 14, 17]
-        backend = lambda au, fold, name: BP4D_PLUS(
-            au, ifold=fold, name=name
-        ).get_loader()
+
+        def backend(au, fold, name):
+            return BP4D_PLUS(au, ifold=fold, name=name).get_loader()
+
     elif args.dataset.startswith("mnist"):
         aus = [6]
-        backend = lambda au, fold, name: MNIST(
-            au,
-            ifold=fold,
-            name=name,
-            imbalance=args.dataset == "mnisti",
-        ).get_loader()
+
+        def backend(au, fold, name):
+            return MNIST(
+                au, ifold=fold, name=name, imbalance=args.dataset == "mnisti"
+            ).get_loader()
 
     if args.transfer:
         aus = [6, 12, 17]
