@@ -24,12 +24,12 @@ def get_data(training: Path, transformation: Path):
     x_names = ["guess"] + [
         f"embedding_{i}" for i in range(results["training"]["meta_embedding"].shape[1])
     ]
-    meta_data = {"Y_names": np.array(["loss"]), "X_names": np.array(x_names)}
+    meta_data = {"y_names": np.array(["loss"]), "x_names": np.array(x_names)}
 
     # apply transformation
-    transformation = caching.read_pickle(transformation)[0][0]["Y"]
+    transformation = caching.read_pickle(transformation)[0][0]["y"]
     for dataset in results:
-        for key in ("Y", "Y_hat"):
+        for key in ("y", "y_hat"):
             results[dataset][key] = (
                 results[dataset][key] - transformation["mean"]
             ) / transformation["std"]
@@ -38,16 +38,16 @@ def get_data(training: Path, transformation: Path):
     datasets = {}
     for key, data in results.items():
         dataset = {
-            "X": np.concatenate([data["Y_hat"], data["meta_embedding"]], axis=1),
-            "Y": np.abs(data["Y_hat"] - data["Y"]),
+            "x": np.concatenate([data["y_hat"], data["meta_embedding"]], axis=1),
+            "y": np.abs(data["y_hat"] - data["y"]),
             "meta_id": data["meta_id"],
             "meta_frame": data["meta_frame"],
-            "meta_Y_hat": data["Y_hat"],
-            "meta_Y": data["Y"],
+            "meta_y_hat": data["y_hat"],
+            "meta_y": data["y"],
         }
 
         datasets[key] = DataLoader(
-            dict_to_batched_data(dataset), property_dict=deepcopy(meta_data)
+            dict_to_batched_data(dataset), properties=deepcopy(meta_data)
         )
 
     return {0: datasets}

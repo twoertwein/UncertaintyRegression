@@ -15,7 +15,7 @@ All building blocks are part of [this repository](https://bitbucket.org/twoertwe
 git clone git@github.com:twoertwein/UncertaintyRegression.git
 cd UncertaintyRegression
 poetry update
-poetry run pip install torchvision==0.9.1+cu102 -f https://download.pytorch.org/whl/torch_stable.html
+poetry run pip install torchvision --extra-index-url https://download.pytorch.org/whl/cu116
 ```
 
 ## Usage
@@ -25,5 +25,5 @@ python train.py --method dropout --workers 4 --dataset mnist
 ```
 Train a secondary model to estimate the uncertainty of the primary dropout model.
 ```sh
-python train.py --uncertainty umlp --workers 4 --dataset mnist
+python train_secundary.py --uncertainty umlp --workers 4 --dataset mnist
 ```

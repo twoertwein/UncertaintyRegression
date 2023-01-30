@@ -37,12 +37,12 @@ class DISFA:
     def get_loader(self) -> DataLoader:
         subject = self.get_list_of_subjects()[0]
         property_dict = {
-            "X_names": [
+            "x_names": [
                 x
                 for x in self.get_features(subject).columns
                 if x.startswith("p_") or x.startswith("hog")
             ],
-            "Y_names": ["intensity"],
+            "y_names": ["intensity"],
         }
         for key in property_dict:
             property_dict[key] = np.asarray(property_dict[key])
@@ -50,7 +50,7 @@ class DISFA:
         # DataLoader will use a copy of it
         self.property_dict = property_dict
 
-        return DataLoader(list(self), property_dict=deepcopy(property_dict))
+        return DataLoader(list(self), properties=deepcopy(property_dict))
 
     def __iter__(self) -> Iterator[dict[str, list[np.ndarray]]]:
         """
@@ -58,7 +58,7 @@ class DISFA:
 
         Yields multiple items for evaluation and testing
         """
-        x_names = self.property_dict["X_names"]
+        x_names = self.property_dict["x_names"]
         # load labels for all subjects
         subjects = self.get_subjects_for_fold()
 
@@ -68,8 +68,8 @@ class DISFA:
 
             # create folds
             data = {
-                "X": data.loc[:, x_names].values.astype(np.float32),
-                "Y": data["intensity"].values[:, None].astype(np.float32),
+                "x": data.loc[:, x_names].values.astype(np.float32),
+                "y": data["intensity"].values[:, None].astype(np.float32),
                 "meta_id": data["subject"].values[:, None],
                 "meta_frame": data.index.values[:, None],
             }

@@ -48,7 +48,7 @@ def train(partitions: dict[str, DISFA], folder: Path, args: argparse.Namespace) 
             grid_search[f"model_{key}"] = grid_search.pop(key)
             model.parameters.pop(key)
 
-    model.update_parameter(grid_search)
+    model.parameters.update(grid_search)
 
     models, parameters, model_transform = model.get_models()
 
@@ -77,7 +77,6 @@ def train(partitions: dict[str, DISFA], folder: Path, args: argparse.Namespace) 
         apply_transform=apply_transformation,
         revert_transform=revert_transform,
         transform_parameter=transforms,
-        final_test=True,
         **kwargs,
     )
 
